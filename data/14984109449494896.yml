@@ -1,0 +1,5 @@
+--- !ruby/object:CodebreakerArtem::Game
+guess_count: 0
+score: 0
+hint_available: true
+secret_code: '2123'
