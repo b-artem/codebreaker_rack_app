@@ -1,6 +1,5 @@
 require 'erb'
 require 'codebreaker_artem/game'
-require 'pry'
 require 'yaml'
 
 class RackApp
