@@ -1,6 +1,9 @@
 require 'erb'
 require 'codebreaker_artem/game'
 require 'yaml'
+require './lib/utils'
+
+require 'pry'
 
 class RackApp
   def self.call(env)
@@ -9,6 +12,7 @@ class RackApp
 
   def initialize(env)
     @request = Rack::Request.new(env)
+    @sessions = Utils.read_sessions || {}
   end
 
   def response
@@ -23,13 +27,17 @@ class RackApp
       Rack::Response.new do |response|
         game = CodebreakerArtem::Game.new
         game.start
-        file = 'data/' + Time.now.to_f.to_s.delete('.') + '.yml'
-        begin
-          File.open(file, 'w') { |f| f.write(YAML.dump(game)) }
-          response.set_cookie('file', file)
-        rescue => exception
-          return Rack::Response.new("Couldn't save to #{file}. #{exception}", 404)
-        end
+        game2 = CodebreakerArtem::Game.new
+        game3 = CodebreakerArtem::Game.new
+        game2.start
+        @request.session['init'] = true
+        sid = @request.session['session_id']
+
+        save_game(2, game2)
+        save_game(3, game3)
+                save_game(sid, game)
+        save_game(4, game)
+        Utils.save_sessions @sessions
         response.redirect('/')
       end
     else Rack::Response.new('Not found', 404)
@@ -46,11 +54,13 @@ class RackApp
   end
 
   def game
-    begin
-      game = YAML.load_file(@request.cookies['file'])
-    rescue
-      return "Couldn't open a file"
-    end
-    game.secret_code || 'No game yet'
+    # game = Utils.load_game
+    # game.secret_code || 'No game yet'
+  end
+
+  private
+
+  def save_game(sid, game)
+    @sessions[sid] = game
   end
 end
