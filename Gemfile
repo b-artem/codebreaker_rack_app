@@ -3,8 +3,9 @@
 ruby '2.4.1'
 source "https://rubygems.org"
 
-group :development do
-  gem 'pry'
+group :development, :test do
+  gem 'pry-byebug'
+  gem 'rspec'
 end
 
 gem 'codebreaker_artem'
