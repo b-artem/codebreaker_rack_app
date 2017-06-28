@@ -1,23 +1,21 @@
-body {
-  /*background-color: #4B7399;*/
-  font-family: Verdana;
-  font-size: 14px;
+* {
+  box-sizing: border-box;
 }
 
-#container {
+.container {
   width: 600px;
-  margin: 0 auto;
-  /*background-color: #FFF;*/
-  padding: 20px 40px;
+  margin: 20px auto;
   border: 1px solid black;
-  margin-top: 20px;
+  border-radius: 10px;
+}
+
+section {
+  width: 100%;
+  margin: 20px auto;
+  padding: 10px auto;
+  /*border: 1px solid black;*/
 }
 
 form {
-/*  margin: 0 auto;*/
-
-}
-
-a {
-  color: #0000FF;
+  margin: 10px auto;
 }
