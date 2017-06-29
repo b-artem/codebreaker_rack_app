@@ -20,6 +20,7 @@ class RackApp
     when '/' then Rack::Response.new(render('index.html.erb'))
     when '/update_word' then update_word
     when '/start' then start
+    when '/submit_guess' then submit_guess
     else Rack::Response.new('Not found', 404)
     end
   end
@@ -58,6 +59,10 @@ class RackApp
       Utils.save_sessions @sessions
       response.redirect('/')
     end
+  end
+
+  def submit_guess
+    Rack::Response.new { |response| response.redirect('/') }
   end
 
   def save_game(sid, game)
