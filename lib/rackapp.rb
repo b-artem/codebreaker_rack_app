@@ -14,7 +14,6 @@ class RackApp
   def initialize(env)
     @request = Rack::Request.new(env)
     @sessions = Utils.read_sessions || {}
-    @guess_log = []
   end
 
   def response
@@ -23,6 +22,7 @@ class RackApp
     when '/update_word' then update_word
     when '/start' then start
     when '/submit_guess' then submit_guess
+    when '/hint' then hint
     else Rack::Response.new('Not found', 404)
     end
   end
@@ -35,6 +35,11 @@ class RackApp
     sid = @request.session['session_id']
     game = @sessions[sid]
     game.inspect.tr('#<>::@', '') || 'No game yet'
+  end
+
+  def guess_count
+    find_game
+    @game.guess_count + 1
   end
 
   def guess_log
@@ -62,8 +67,9 @@ class RackApp
       game.start
       @request.session['init'] = true
       sid = @request.session['session_id']
-      save_game(sid, game)
       response.set_cookie('guess_log', '')
+      response.set_cookie('hint', '')
+      save_game(sid, game)
       Utils.save_sessions @sessions
       response.redirect('/')
     end
@@ -73,14 +79,14 @@ class RackApp
     Rack::Response.new do |response|
       find_game
       guess = @request.params['guess']
-      return response.redirect('/') unless Validator.code_valid?(guess)
-      mark = @game.mark_guess(guess)
-      @guess_log = @request.cookies['guess_log']
-      @guess_log ||= []
-      @guess_log << "#{guess}: #{mark}\n"
-      response.set_cookie('guess_log', @guess_log)
-      Utils.save_sessions @sessions
-
+      if Validator.code_valid?(guess)
+        mark = @game.mark_guess(guess)
+        @guess_log = @request.cookies['guess_log']
+        @guess_log ||= []
+        @guess_log << "#{guess}: #{mark}\n"
+        response.set_cookie('guess_log', @guess_log)
+        Utils.save_sessions @sessions
+      end
 
       # return CLI.win(input, game.score) if Validator.win_mark?(mark)
       # return CLI.lose(game.secret_code, game.score, MAX) if game.guess_count >= MAX
@@ -88,6 +94,24 @@ class RackApp
     end
   end
 
+  def hints_left
+    return 'You have no hints left' unless @request.cookies['hint'] == ''
+    'You have 1 hint left'
+  end
+
+  def show_hint
+    @request.cookies['hint']
+  end
+
+  def hint
+    find_game
+    return Rack::Response.new { |resp| resp.redirect('/') } unless hint = @game.hint
+    Rack::Response.new do |response|
+      response.set_cookie('hint', "HINT: Number #{hint[0]} is in position #{hint[1] + 1}")
+      Utils.save_sessions @sessions
+      response.redirect('/')
+    end
+  end
 
 
   def find_game
