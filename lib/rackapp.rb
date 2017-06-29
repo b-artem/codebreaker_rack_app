@@ -1,5 +1,6 @@
 # require 'erb'
 require 'codebreaker_artem/game'
+require 'codebreaker_artem/validator'
 require 'yaml'
 require './lib/utils'
 
@@ -13,6 +14,7 @@ class RackApp
   def initialize(env)
     @request = Rack::Request.new(env)
     @sessions = Utils.read_sessions || {}
+    @guess_log = []
   end
 
   def response
@@ -33,6 +35,11 @@ class RackApp
     sid = @request.session['session_id']
     game = @sessions[sid]
     game.inspect.tr('#<>::@', '') || 'No game yet'
+  end
+
+  def guess_log
+    guess_log = @request.cookies['guess_log'] || 'No guesses yet'
+    guess_log.split("\n")
   end
 
   private
@@ -56,13 +63,36 @@ class RackApp
       @request.session['init'] = true
       sid = @request.session['session_id']
       save_game(sid, game)
+      response.set_cookie('guess_log', '')
       Utils.save_sessions @sessions
       response.redirect('/')
     end
   end
 
   def submit_guess
-    Rack::Response.new { |response| response.redirect('/') }
+    Rack::Response.new do |response|
+      find_game
+      guess = @request.params['guess']
+      return response.redirect('/') unless Validator.code_valid?(guess)
+      mark = @game.mark_guess(guess)
+      @guess_log = @request.cookies['guess_log']
+      @guess_log ||= []
+      @guess_log << "#{guess}: #{mark}\n"
+      response.set_cookie('guess_log', @guess_log)
+      Utils.save_sessions @sessions
+
+
+      # return CLI.win(input, game.score) if Validator.win_mark?(mark)
+      # return CLI.lose(game.secret_code, game.score, MAX) if game.guess_count >= MAX
+      response.redirect('/')
+    end
+  end
+
+
+
+  def find_game
+    sid = @request.session['session_id']
+    @game = @sessions[sid]
   end
 
   def save_game(sid, game)
