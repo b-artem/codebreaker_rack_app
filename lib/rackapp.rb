@@ -39,6 +39,7 @@ class RackApp
 
   def guess_count
     find_game
+    return '1' unless @game
     @game.guess_count + 1
   end
 
