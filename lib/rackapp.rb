@@ -84,8 +84,9 @@ class RackApp
   def submit_guess
     Rack::Response.new do |response|
       find_game
+      max_attempts = CodebreakerArtem::Game::MAX_GUESS_NUMBER
       guess = @request.params['guess']
-      if Validator.code_valid?(guess)
+      if Validator.code_valid?(guess) && @game.guess_count < max_attempts
         mark = @game.mark_guess(guess)
         @guess_log = @request.cookies['guess_log']
         @guess_log ||= []

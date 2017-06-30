@@ -25,6 +25,10 @@ section#info {
   display: flex;
 }
 
+section#info>div {
+  width: 40%;
+}
+
 section#info>div:last-of-type {
   margin-left: 20%;
 }
