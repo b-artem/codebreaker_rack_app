@@ -19,7 +19,6 @@ class RackApp
   def response
     case @request.path
     when '/' then Rack::Response.new(render('index.html.erb'))
-    when '/update_word' then update_word
     when '/start' then start
     when '/submit_guess' then submit_guess
     when '/hint' then hint
@@ -48,6 +47,12 @@ class RackApp
     guess_log.split("\n")
   end
 
+  def guess_left
+    find_game
+    return CodebreakerArtem::Game::MAX_GUESS_NUMBER unless @game
+    CodebreakerArtem::Game::MAX_GUESS_NUMBER - @game.guess_count
+  end
+
   private
 
   def render(template)
@@ -55,12 +60,6 @@ class RackApp
     ERB.new(File.read(path)).result(binding)
   end
 
-  def update_word
-    Rack::Response.new do |response|
-      response.set_cookie('word', @request.params['word'])
-      response.redirect('/')
-    end
-  end
 
   def start
     Rack::Response.new do |response|
@@ -69,7 +68,8 @@ class RackApp
       @request.session['init'] = true
       sid = @request.session['session_id']
       response.set_cookie('guess_log', '')
-      response.set_cookie('hint', '')
+      response.set_cookie('secret_number', '')
+      response.set_cookie('secret_position', '')
       save_game(sid, game)
       Utils.save_sessions @sessions
       response.redirect('/')
@@ -96,19 +96,29 @@ class RackApp
   end
 
   def hints_left
-    return 'You have no hints left' unless @request.cookies['hint'] == ''
-    'You have 1 hint left'
+    return 'no' unless @request.cookies['secret_number'] == ''
+    '1'
   end
 
-  def show_hint
-    @request.cookies['hint']
+  def secret_number
+    @request.cookies['secret_number']
+  end
+
+  def secret_position
+    @request.cookies['secret_position']
+  end
+
+  def show_hint?
+    return if @request.cookies['secret_number'] == ''
+    true
   end
 
   def hint
     find_game
     return Rack::Response.new { |resp| resp.redirect('/') } unless hint = @game.hint
     Rack::Response.new do |response|
-      response.set_cookie('hint', "HINT: Number #{hint[0]} is in position #{hint[1] + 1}")
+      response.set_cookie('secret_number', hint[0].to_s)
+      response.set_cookie('secret_position', (hint[1] + 1).to_s)
       Utils.save_sessions @sessions
       response.redirect('/')
     end

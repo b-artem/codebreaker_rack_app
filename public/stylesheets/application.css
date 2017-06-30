@@ -1,5 +1,6 @@
-* {
-  box-sizing: border-box;
+#guess {
+    width: 100px;
+    text-align: center;
 }
 
 .container {
@@ -16,6 +17,14 @@ section {
   /*border: 1px solid black;*/
 }
 
-form {
-  margin: 10px auto;
+section#actions * {
+  display: inline;
+}
+
+section#info {
+  display: flex;
+}
+
+section#info>div:last-of-type {
+  margin-left: 20%;
 }
