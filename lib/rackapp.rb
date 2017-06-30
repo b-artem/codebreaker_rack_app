@@ -18,7 +18,7 @@ class RackApp
 
   def response
     case @request.path
-    when '/' then Rack::Response.new(render('index.html.erb'))
+    when '/' then home
     when '/start' then start
     when '/submit_guess' then submit_guess
     when '/hint' then hint
@@ -60,6 +60,11 @@ class RackApp
     ERB.new(File.read(path)).result(binding)
   end
 
+  def home
+    find_game
+    return Rack::Response.new(render('index.html.erb')) if @game
+    start
+  end
 
   def start
     Rack::Response.new do |response|
