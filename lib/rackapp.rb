@@ -109,7 +109,8 @@ class RackApp
   end
 
   def show_hint?
-    return if @request.cookies['secret_number'] == ''
+    return unless hint = @request.cookies['secret_number']
+    return if hint == ''
     true
   end
 
