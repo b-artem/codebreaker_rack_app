@@ -39,6 +39,8 @@ class RackApp
   def guess_count
     find_game
     return '1' unless @game
+    guess_count = @game.guess_count
+    return guess_count if guess_count == CodebreakerArtem::Game::MAX_GUESS_NUMBER
     @game.guess_count + 1
   end
 
