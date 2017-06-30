@@ -96,6 +96,7 @@ class RackApp
   end
 
   def hints_left
+    return 'no' unless @request.cookies['secret_number']
     return 'no' unless @request.cookies['secret_number'] == ''
     '1'
   end
