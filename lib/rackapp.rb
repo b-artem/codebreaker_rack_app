@@ -26,9 +26,9 @@ class RackApp
     end
   end
 
-  def word
-    @request.cookies['word'] || 'Nothing'
-  end
+  # def word
+  #   @request.cookies['word'] || 'Nothing'
+  # end
 
   def game
     sid = @request.session['session_id']
@@ -133,7 +133,6 @@ class RackApp
       response.redirect('/')
     end
   end
-
 
   def find_game
     sid = @request.session['session_id']
