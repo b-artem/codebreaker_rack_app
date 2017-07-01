@@ -4,7 +4,7 @@ require 'codebreaker_artem/validator'
 require 'yaml'
 require './lib/utils'
 
-# require 'pry-byebug'
+require 'pry-byebug'
 
 class RackApp
   def self.call(env)
@@ -32,7 +32,7 @@ class RackApp
 
   def game
     sid = @request.session['session_id']
-    game = @sessions[sid]
+    game = @sessions[sid][:game]
     game.inspect.tr('#<>::@', '') || 'No game yet'
   end
 
@@ -45,7 +45,8 @@ class RackApp
   end
 
   def guess_log
-    guess_log = @request.cookies['guess_log'] || 'No guesses yet'
+    find_game
+    guess_log = @guess_log || 'No guesses yet'
     guess_log.split("\n")
   end
 
@@ -74,10 +75,10 @@ class RackApp
       game.start
       @request.session['init'] = true
       sid = @request.session['session_id']
-      response.set_cookie('guess_log', '')
       response.set_cookie('secret_number', '')
       response.set_cookie('secret_position', '')
-      save_game(sid, game)
+      guess_log = ''
+      save_game(sid, game, guess_log)
       Utils.save_sessions @sessions
       response.redirect('/')
     end
@@ -90,10 +91,10 @@ class RackApp
       guess = @request.params['guess']
       if Validator.code_valid?(guess) && @game.guess_count < max_attempts
         mark = @game.mark_guess(guess)
-        @guess_log = @request.cookies['guess_log']
-        @guess_log ||= []
+        # @guess_log = @request.cookies['guess_log']
+        # @guess_log ||= []
         @guess_log << "#{guess}: #{mark}\n"
-        response.set_cookie('guess_log', @guess_log)
+        # response.set_cookie('guess_log', @guess_log)
         Utils.save_sessions @sessions
       end
 
@@ -136,10 +137,12 @@ class RackApp
 
   def find_game
     sid = @request.session['session_id']
-    @game = @sessions[sid]
+    return unless @sessions[sid]
+    @game = @sessions[sid][:game]
+    @guess_log = @sessions[sid][:guess_log]
   end
 
-  def save_game(sid, game)
-    @sessions[sid] = game
+  def save_game(sid, game, guess_log)
+    @sessions[sid] = { game: game, guess_log: guess_log }
   end
 end
