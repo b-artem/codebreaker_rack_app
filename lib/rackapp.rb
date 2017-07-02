@@ -27,6 +27,7 @@ class RackApp
     end
   end
 
+  ###############################################################
   def game
     sid = @request.session['session_id']
     game = @sessions[sid][:game]
@@ -151,7 +152,7 @@ class RackApp
     @lost = @sessions[sid][:lost]
   end
 
-  def save_game(sid, game, guess_log, won = false, lost = false)
-    @sessions[sid] = { game: game, guess_log: guess_log, won: won, lost: lost }
+  def save_game(sid, game, guess_log)
+    @sessions[sid] = { game: game, guess_log: guess_log }
   end
 end
