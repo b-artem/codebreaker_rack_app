@@ -1,4 +1,4 @@
-class Utils
+class YamlUtils
   DATA_PATH = 'data/data.yml'.freeze
 
   def self.save_sessions(sessions)

@@ -1,5 +1,5 @@
 require './lib/rackapp'
-# require './lib/middl'
+require 'rack/protection'
 
 app = Rack::Builder.new do
   use Rack::Reloader, 0
