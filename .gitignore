@@ -1,6 +1,5 @@
 secrets.sh
 .ruby-gemset
-Gemfile.lock
 data/
 spec/
 .rspec
