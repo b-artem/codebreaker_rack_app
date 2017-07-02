@@ -35,8 +35,19 @@
         </form>
       </section>
 
+      <section id="game-result">
+        <% if won %>
+          <div class="alert alert-success">
+            <strong>CONGRATULATIONS! You've won the game!
+            You used <%= guess_count %> attempts
+            and your score is <%= @game.score %> points.
+            The secret code was <%= @game.secret_code %>.</strong>
+          </div>
+        <% end %>
+      </section>
+
       <section id="info">
-        <div id="attempts-hits-info">
+        <div id="attempts-hints-info">
           <% if show_hint? %>
             <div class="alert alert-success">
               <strong>HINT: </strong>number <strong><%= secret_number %></strong>

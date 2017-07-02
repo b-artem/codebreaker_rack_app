@@ -4,7 +4,7 @@ require 'codebreaker_artem/validator'
 require 'yaml'
 require './lib/utils'
 
-# require 'pry-byebug'
+require 'pry-byebug'
 
 class RackApp
   def self.call(env)
@@ -14,6 +14,7 @@ class RackApp
   def initialize(env)
     @request = Rack::Request.new(env)
     @sessions = Utils.read_sessions || {}
+    @won = 'dfdsg'
   end
 
   def response
@@ -25,10 +26,6 @@ class RackApp
     else Rack::Response.new('Not found', 404)
     end
   end
-
-  # def word
-  #   @request.cookies['word'] || 'Nothing'
-  # end
 
   def game
     sid = @request.session['session_id']
@@ -91,13 +88,11 @@ class RackApp
       guess = @request.params['guess']
       if Validator.code_valid?(guess) && @game.guess_count < max_attempts
         mark = @game.mark_guess(guess)
-        # @guess_log = @request.cookies['guess_log']
-        # @guess_log ||= []
         @guess_log << "#{guess}: #{mark}\n"
-        # response.set_cookie('guess_log', @guess_log)
-        Utils.save_sessions @sessions
+        # @won = true if Validator.win_mark?(mark)
       end
-
+      # @lost = true if !@won && @game.guess_count >= max_attempts
+      Utils.save_sessions @sessions
       # return CLI.win(input, game.score) if Validator.win_mark?(mark)
       # return CLI.lose(game.secret_code, game.score, MAX) if game.guess_count >= MAX
       response.redirect('/')
@@ -116,6 +111,13 @@ class RackApp
 
   def secret_position
     @request.cookies['secret_position']
+  end
+
+  def won
+    find_game
+    return unless @guess_log
+    return unless @guess_log =~ /++++/
+    true
   end
 
   def show_hint?
@@ -140,9 +142,11 @@ class RackApp
     return unless @sessions[sid]
     @game = @sessions[sid][:game]
     @guess_log = @sessions[sid][:guess_log]
+    @won = @sessions[sid][:won]
+    @lost = @sessions[sid][:lost]
   end
 
-  def save_game(sid, game, guess_log)
-    @sessions[sid] = { game: game, guess_log: guess_log }
+  def save_game(sid, game, guess_log, won = false, lost = false)
+    @sessions[sid] = { game: game, guess_log: guess_log, won: won, lost: lost }
   end
 end

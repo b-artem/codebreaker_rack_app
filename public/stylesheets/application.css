@@ -1,8 +1,3 @@
-#guess {
-    width: 100px;
-    text-align: center;
-}
-
 .container {
   width: 600px;
   margin: 20px auto;
@@ -14,6 +9,11 @@ section {
   width: 100%;
   margin: 20px auto;
   padding: 10px auto;
+}
+
+#guess {
+    width: 100px;
+    text-align: center;
 }
 
 section#actions * {
