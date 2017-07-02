@@ -21,16 +21,16 @@
           <button type="submit" class="btn btn-primary">Start new game</button>
         </form>
         <form method="post" action="/hint">
-          <button type="submit" class="btn btn-primary">Take a hint</button>
+          <button id="hint-btn" type="submit" class="btn btn-primary">Take a hint</button>
         </form>
       </section>
 
       <section>
         <form id="guess-form" class="form-inline" method="post" action="/submit_guess">
           <div class="form-group">
-            <label for="guess">Enter your guess no. <%= guess_count %>:</label>
+            <label id="guess-label" for="guess">Enter your guess no. <%= guess_count %>:</label>
             <input id="guess" name="guess" type="text" placeholder="1234" class="form-control">
-            <button type="submit" class="btn btn-primary">Enter guess</button>
+            <button id="submit-btn" type="submit" class="btn btn-primary">Enter guess</button>
           </div>
         </form>
       </section>
@@ -39,18 +39,18 @@
         <% if won? %>
           <div class="alert alert-success">
             <strong>CONGRATULATIONS! You've won the game!</strong>
-            You used <%= guess_count %> attempts
+            You used <%= @game.guess_count %> attempts
             and your score is <strong><%= @game.score %> points.</strong>
-            The secret code was <strong><%= @game.secret_code %>.</strong>
+            The secret code was <strong><%= @game.secret_code %></strong>
           </div>
         <% end %>
 
         <% if lost? %>
           <div class="alert alert-danger">
             <strong>You've lost the game!</strong>
-            You used <%= guess_count %> attempts
+            You used <%= @game.guess_count %> attempts
             and your score is <strong><%= @game.score %> points.</strong>
-            The secret code was <strong><%= @game.secret_code %>.</strong>
+            The secret code was <strong><%= @game.secret_code %></strong>
           </div>
         <% end %>
       </section>
@@ -106,6 +106,15 @@
 
     <script>
       $(document).ready(function(){
+        <% if won? || lost? %>
+          $('#guess, #submit-btn, #hint-btn').prop("disabled", true);
+          $('#guess-label').addClass('disabled');
+        <% end %>
+
+        <% if hints_left == 'no' %>
+          $('#hint-btn').prop("disabled", true);
+        <% end %>
+
         $('#guess').focus();
         $("#guess-form").submit(function(){
           pattern = /^[1-6]{4}$/
