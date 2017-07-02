@@ -82,19 +82,16 @@ class RackApp
   end
 
   def submit_guess
+    find_game
+    return Rack::Response.new { |response| response.redirect('/') } if won? || lost?
     Rack::Response.new do |response|
-      find_game
       max_attempts = CodebreakerArtem::Game::MAX_GUESS_NUMBER
       guess = @request.params['guess']
       if Validator.code_valid?(guess) && @game.guess_count < max_attempts
         mark = @game.mark_guess(guess)
         @guess_log << "#{guess}: #{mark}\n"
-        # @won = true if Validator.win_mark?(mark)
       end
-      # @lost = true if !@won && @game.guess_count >= max_attempts
       Utils.save_sessions @sessions
-      # return CLI.win(input, game.score) if Validator.win_mark?(mark)
-      # return CLI.lose(game.secret_code, game.score, MAX) if game.guess_count >= MAX
       response.redirect('/')
     end
   end
@@ -113,10 +110,18 @@ class RackApp
     @request.cookies['secret_position']
   end
 
-  def won
+  def won?
     find_game
     return unless @guess_log
     return unless @guess_log.include? '++++'
+    true
+  end
+
+  def lost?
+    return if won?
+    find_game
+    return unless @game
+    return if @game.guess_count < CodebreakerArtem::Game::MAX_GUESS_NUMBER
     true
   end
 
