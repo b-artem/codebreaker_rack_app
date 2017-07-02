@@ -4,7 +4,7 @@ require 'codebreaker_artem/validator'
 require 'yaml'
 require './lib/utils'
 
-require 'pry-byebug'
+# require 'pry-byebug'
 
 class RackApp
   def self.call(env)
