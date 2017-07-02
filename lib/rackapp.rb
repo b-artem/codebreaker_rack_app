@@ -33,15 +33,6 @@ class RackApp
     ERB.new(File.read(path)).result(binding)
   end
 
-
-  ###############################################################
-  def game
-    sid = @request.session['session_id']
-    game = @sessions[sid][:game]
-    game.inspect.tr('#<>::@', '') || 'No game yet'
-  end
-  ################################################################
-
   def home
     return Rack::Response.new(render('index.html.erb')) if @game
     start

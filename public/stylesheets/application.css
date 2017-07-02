@@ -16,10 +16,6 @@ section {
     text-align: center;
 }
 
-section#actions * {
-  display: inline;
-}
-
 section#info {
   display: flex;
 }
@@ -30,6 +26,11 @@ section#info>div {
 
 section#info>div:last-of-type {
   margin-left: 20%;
+}
+
+section#guess-section * {
+  display: inline;
+  vertical-align: inherit;
 }
 
 .disabled {
