@@ -7,7 +7,7 @@ The game uses [codebreaker_artem](https://rubygems.org/gems/codebreaker_artem) g
 
 [Open app](https://codebreaker-rackapp.herokuapp.com)
 
-### Rules:
+## Game Rules:
 
 The code-maker, which will be played by the application, creates a secret code of four numbers between 1 and 6.
 
