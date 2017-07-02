@@ -116,7 +116,7 @@ class RackApp
   def won
     find_game
     return unless @guess_log
-    return unless @guess_log =~ /++++/
+    return unless @guess_log.include? '++++'
     true
   end
 
