@@ -5,7 +5,7 @@ The game uses [codebreaker_artem](https://rubygems.org/gems/codebreaker_artem) g
 
 ## Usage
 
-[Open app](https://https://codebreaker-rackapp.herokuapp.com)
+[Open app](https://codebreaker-rackapp.herokuapp.com)
 
 ### Rules:
 
