@@ -51,6 +51,20 @@
         <% end %>
       </section>
 
+      <section id="save-result">
+        <% if won? || lost? %>
+          <form id="save-result-form" class="form-inline" method="post" action="/save_result">
+            <div class="form-group">
+              <label id="save-result-label" for="name">Please enter your name: </label>
+              <input id="name-input" name="name" type="text" placeholder="Name" class="form-control">
+              <button id="save-result-btn" type="submit" class="btn btn-primary">OK</button>
+              <button id="cancel-save-btn" type="button" class="btn btn-primary">Cancel</button>
+            </div>
+          </form>
+          <%= stats %>
+        <% end %>
+      </section>
+
       <section id="info">
         <div id="attempts-hints-info">
           <% if show_hint? %>

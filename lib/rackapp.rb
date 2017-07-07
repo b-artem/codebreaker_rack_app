@@ -22,6 +22,7 @@ class RackApp
     when '/start' then start
     when '/submit_guess' then submit_guess
     when '/hint' then hint
+    when '/save_result' then save_result
     else Rack::Response.new('Not found', 404)
     end
   end
@@ -96,7 +97,7 @@ class RackApp
   end
 
   def hint
-    return Rack::Response.new { |resp| resp.redirect('/') } unless hint = @game.hint
+    return Rack::Response.new { |resp| resp.redirect('/') } unless (hint = @game.hint)
     Rack::Response.new do |response|
       response.set_cookie('secret_number', hint[0].to_s)
       response.set_cookie('secret_position', (hint[1] + 1).to_s)
@@ -112,9 +113,23 @@ class RackApp
   end
 
   def show_hint?
-    return unless hint = @request.cookies['secret_number']
+    return unless (hint = @request.cookies['secret_number'])
     return if hint == ''
     true
+  end
+
+  def save_result
+    Rack::Response.new do |response|
+      response.set_cookie('name', @request.params['name'])
+      sid = @request.session['session_id']
+      YamlUtils.save_result(sid, @game, @request.params['name'])
+      response.redirect('/')
+      binding.pry
+    end
+  end
+
+  def stats
+    YamlUtils.read_stats
   end
 
   def secret_number
