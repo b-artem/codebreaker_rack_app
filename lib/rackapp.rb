@@ -167,7 +167,7 @@ class RackApp
   def lost?
     return if won?
     return unless @game
-    return if @game.guess_count < CodebreakerArtem::Game::MAX_GUESS_NUMBER
+    return if @game.guess_count < MAX_ATTEMPTS
     true
   end
 end

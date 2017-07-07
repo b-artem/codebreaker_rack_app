@@ -35,6 +35,23 @@ class RackAppTest < Test::Unit::TestCase
     assert last_response.ok?
   end
 
+  def test_save_result
+    get '/save_result'
+    follow_redirect!
+    assert last_response.ok?
+  end
+
+  def test_cancel_save_result
+    get '/cancel_save_result'
+    follow_redirect!
+    assert last_response.ok?
+  end
+
+  def test_statistics
+    get '/statistics'
+    assert last_response.ok?
+  end
+
   def test_not_found
     get '/something_not_existing'
     assert_equal last_response.status, 404
