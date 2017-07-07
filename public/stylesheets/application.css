@@ -16,6 +16,14 @@ section {
     text-align: center;
 }
 
+section#buttons * {
+  display: inline;
+}
+
+section#save-result * {
+  display: inline;
+}
+
 section#info {
   display: flex;
 }

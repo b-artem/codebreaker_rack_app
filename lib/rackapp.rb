@@ -22,6 +22,9 @@ class RackApp
     when '/start' then start
     when '/submit_guess' then submit_guess
     when '/hint' then hint
+    when '/save_result' then save_result
+    when '/cancel_save_result' then cancel_save_result
+    when '/statistics' then statistics
     else Rack::Response.new('Not found', 404)
     end
   end
@@ -58,6 +61,8 @@ class RackApp
       @request.session['init'] = true
       response.set_cookie('secret_number', '')
       response.set_cookie('secret_position', '')
+      response.set_cookie('name', '')
+      response.set_cookie('save_result', '')
       guess_log = ''
       save_game(@request.session['session_id'], game, guess_log)
       YamlUtils.save_sessions @sessions
@@ -96,7 +101,7 @@ class RackApp
   end
 
   def hint
-    return Rack::Response.new { |resp| resp.redirect('/') } unless hint = @game.hint
+    return Rack::Response.new { |resp| resp.redirect('/') } unless (hint = @game.hint)
     Rack::Response.new do |response|
       response.set_cookie('secret_number', hint[0].to_s)
       response.set_cookie('secret_position', (hint[1] + 1).to_s)
@@ -112,9 +117,37 @@ class RackApp
   end
 
   def show_hint?
-    return unless hint = @request.cookies['secret_number']
+    return unless (hint = @request.cookies['secret_number'])
     return if hint == ''
     true
+  end
+
+  def save_result
+    Rack::Response.new do |response|
+      response.set_cookie('name', @request.params['name'])
+      YamlUtils.save_result(@game, @request.params['name'])
+      response.set_cookie('save_result', 'ok')
+      response.redirect('/')
+    end
+  end
+
+  def cancel_save_result
+    Rack::Response.new do |response|
+      response.set_cookie('save_result', 'cancel')
+      response.redirect('/')
+    end
+  end
+
+  def propose_to_save_result?
+    true if @request.cookies['save_result'] == ''
+  end
+
+  def statistics
+    Rack::Response.new(render('statistics.html.erb'))
+  end
+
+  def stats
+    YamlUtils.read_stats
   end
 
   def secret_number
@@ -134,7 +167,7 @@ class RackApp
   def lost?
     return if won?
     return unless @game
-    return if @game.guess_count < CodebreakerArtem::Game::MAX_GUESS_NUMBER
+    return if @game.guess_count < MAX_ATTEMPTS
     true
   end
 end
