@@ -23,6 +23,8 @@ class RackApp
     when '/submit_guess' then submit_guess
     when '/hint' then hint
     when '/save_result' then save_result
+    when '/cancel_save_result' then cancel_save_result
+    when '/statistics' then statistics
     else Rack::Response.new('Not found', 404)
     end
   end
@@ -59,6 +61,8 @@ class RackApp
       @request.session['init'] = true
       response.set_cookie('secret_number', '')
       response.set_cookie('secret_position', '')
+      response.set_cookie('name', '')
+      response.set_cookie('save_result', '')
       guess_log = ''
       save_game(@request.session['session_id'], game, guess_log)
       YamlUtils.save_sessions @sessions
@@ -122,8 +126,24 @@ class RackApp
     Rack::Response.new do |response|
       response.set_cookie('name', @request.params['name'])
       YamlUtils.save_result(@game, @request.params['name'])
+      response.set_cookie('save_result', 'ok')
       response.redirect('/')
     end
+  end
+
+  def cancel_save_result
+    Rack::Response.new do |response|
+      response.set_cookie('save_result', 'cancel')
+      response.redirect('/')
+    end
+  end
+
+  def propose_to_save_result?
+    true if @request.cookies['save_result'] == ''
+  end
+
+  def statistics
+    Rack::Response.new(render('statistics.html.erb'))
   end
 
   def stats

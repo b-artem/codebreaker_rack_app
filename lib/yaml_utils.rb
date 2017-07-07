@@ -2,7 +2,7 @@ require 'pry-byebug'
 
 class YamlUtils
   DATA_PATH = 'data/data.yml'.freeze
-  STATS_PATH = 'statistics/stats.yml'.freeze
+  STATS_PATH = 'data/stats.yml'.freeze
 
   def self.save_sessions(sessions)
     Dir.mkdir 'data' unless File.exist? 'data'
@@ -21,9 +21,8 @@ class YamlUtils
   end
 
   def self.save_result(game, name)
-    Dir.mkdir 'statistics' unless File.exist? 'statistics'
+    Dir.mkdir 'data' unless File.exist? 'data'
     game_result = read_stats
-    binding.pry
     game_result[Time.now] = { name: name, score: game.score, attempts: game.guess_count }
     File.open(STATS_PATH, 'w') { |file| file.write YAML.dump(game_result) }
   rescue => exception

@@ -7,13 +7,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="stylesheets/application.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/validate_guess_form.js"></script>
+    <script src="js/validate_save_result_form.js"></script>
   </head>
 
   <body>
     <div class='container'>
-      <section id="start">
+      <section id="buttons">
         <form method="post" action="/start">
           <button type="submit" class="btn btn-primary">Start new game</button>
+        </form>
+
+        <form method="post" action="/statistics">
+          <button type="submit" class="btn">Show statistics</button>
         </form>
       </section>
 
@@ -52,21 +58,17 @@
       </section>
 
       <section id="save-result">
-        <% if won? || lost? %>
-          <form id="save-result-form" class="form-inline" method="post" action="/save_result">
+        <% if ((won? || lost?) && propose_to_save_result?) %>
+          <form id="save-result-ok-form" class="form-inline" method="post" action="/save_result">
             <div class="form-group">
               <label id="save-result-label" for="name">Please enter your name: </label>
               <input id="name-input" name="name" type="text" placeholder="Name" class="form-control">
-              <button id="save-result-btn" type="submit" class="btn btn-primary">OK</button>
-              <button id="cancel-save-btn" type="button" class="btn btn-primary">Cancel</button>
+              <button id="save-result-ok-btn" type="submit" class="btn btn-primary">OK</button>
             </div>
           </form>
-          <% stats.each do |time, result| %>
-            Name: <%= result[:name] %><br>
-            Score: <%= result[:score] %><br>
-            Attempts: <%= result[:attempts] %><br>
-            Time: <%= time %><br><br>
-          <% end %>
+          <form id="save-result-cancel-form" method="post" action="/cancel_save_result">
+            <button id="save-result-cancel-btn" type="submit" class="btn btn-primary">Cancel</button>
+          </form>
         <% end %>
       </section>
 
@@ -98,6 +100,7 @@
         <% if won? || lost? %>
           $('#guess, #submit-btn, #hint-btn').prop("disabled", true);
           $('#guess-label').addClass('disabled');
+          $('#name-input').focus();
         <% end %>
 
         <% if hints_left == 'no' %>
@@ -105,14 +108,6 @@
         <% end %>
 
         $('#guess').focus();
-        $("#guess-form").submit(function(){
-          pattern = /^[1-6]{4}$/
-          var guess = $('#guess').val();
-          var res = pattern.test(guess);
-          if (res == false) {
-            alert("Code must contain 4 numbers from 1 to 6. Please try again");
-          }
-        });
       });
     </script>
   </body>
