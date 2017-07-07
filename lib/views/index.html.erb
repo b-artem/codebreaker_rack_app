@@ -61,7 +61,12 @@
               <button id="cancel-save-btn" type="button" class="btn btn-primary">Cancel</button>
             </div>
           </form>
-          <%= stats %>
+          <% stats.each do |time, result| %>
+            Name: <%= result[:name] %><br>
+            Score: <%= result[:score] %><br>
+            Attempts: <%= result[:attempts] %><br>
+            Time: <%= time %><br><br>
+          <% end %>
         <% end %>
       </section>
 

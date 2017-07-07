@@ -20,11 +20,11 @@ class YamlUtils
     sessions
   end
 
-  def self.save_result(sid, game, name)
-    binding.pry
+  def self.save_result(game, name)
     Dir.mkdir 'statistics' unless File.exist? 'statistics'
     game_result = read_stats
-    game_result[sid] = { name: name, time: Time.now, score: game.score, attempts: game.guess_count }
+    binding.pry
+    game_result[Time.now] = { name: name, score: game.score, attempts: game.guess_count }
     File.open(STATS_PATH, 'w') { |file| file.write YAML.dump(game_result) }
   rescue => exception
     return Rack::Response.new("Can't save to #{DATA_PATH}. #{exception}", 404)
@@ -33,12 +33,10 @@ class YamlUtils
   def self.read_stats
     begin
       stats = YAML.load_file(STATS_PATH)
-      binding.pry
     rescue => exception
       puts "Can't open a file. #{exception}"
     end
     return {} unless stats
-    # Change key of hash to be unique (probably time, but not a session)
-    stats#.sort_by { |item| item[:score] }
+    stats.to_h.sort_by { |key, result| result[:score] }.reverse.to_h
   end
 end

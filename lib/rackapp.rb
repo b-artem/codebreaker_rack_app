@@ -121,10 +121,8 @@ class RackApp
   def save_result
     Rack::Response.new do |response|
       response.set_cookie('name', @request.params['name'])
-      sid = @request.session['session_id']
-      YamlUtils.save_result(sid, @game, @request.params['name'])
+      YamlUtils.save_result(@game, @request.params['name'])
       response.redirect('/')
-      binding.pry
     end
   end
 
