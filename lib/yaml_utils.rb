@@ -8,7 +8,7 @@ class YamlUtils
     Dir.mkdir 'data' unless File.exist? 'data'
     File.open(DATA_PATH, 'w') { |file| file.write YAML.dump(sessions) }
   rescue => exception
-    return Rack::Response.new("Can't save to #{DATA_PATH}. #{exception}", 404)
+    puts "Can't save to #{DATA_PATH}. #{exception}"
   end
 
   def self.read_sessions
@@ -26,7 +26,7 @@ class YamlUtils
     game_result[Time.now] = { name: name, score: game.score, attempts: game.guess_count }
     File.open(STATS_PATH, 'w') { |file| file.write YAML.dump(game_result) }
   rescue => exception
-    return Rack::Response.new("Can't save to #{DATA_PATH}. #{exception}", 404)
+    puts "Can't save to #{DATA_PATH}. #{exception}"
   end
 
   def self.read_stats
