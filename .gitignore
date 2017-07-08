@@ -1,1 +1,5 @@
+secrets.sh
 .ruby-gemset
+data/
+spec/
+.rspec

@@ -1,0 +1,46 @@
+.container {
+  width: 600px;
+  margin: 20px auto;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+section {
+  width: 100%;
+  margin: 20px auto;
+  padding: 10px auto;
+}
+
+#guess {
+    width: 100px;
+    text-align: center;
+}
+
+section#buttons * {
+  display: inline;
+}
+
+section#save-result * {
+  display: inline;
+}
+
+section#info {
+  display: flex;
+}
+
+section#info>div {
+  width: 40%;
+}
+
+section#info>div:last-of-type {
+  margin-left: 20%;
+}
+
+section#guess-section * {
+  display: inline;
+  vertical-align: inherit;
+}
+
+.disabled {
+  color: darkgrey;
+}

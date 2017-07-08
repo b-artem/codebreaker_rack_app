@@ -1,0 +1,17 @@
+<% if won? %>
+  <div class="alert alert-success">
+    <strong>CONGRATULATIONS! You've won the game!</strong>
+    You used <%= @game.guess_count %> attempts
+    and your score is <strong><%= @game.score %> points.</strong>
+    The secret code was <strong><%= @game.secret_code %></strong>
+  </div>
+<% end %>
+
+<% if lost? %>
+  <div class="alert alert-danger">
+    <strong>You've lost the game!</strong>
+    You used <%= @game.guess_count %> attempts
+    and your score is <strong><%= @game.score %> points.</strong>
+    The secret code was <strong><%= @game.secret_code %></strong>
+  </div>
+<% end %>
