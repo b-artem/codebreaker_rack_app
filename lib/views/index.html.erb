@@ -14,83 +14,28 @@
   <body>
     <div class='container'>
       <section id="buttons">
-        <form method="post" action="/start">
-          <button type="submit" class="btn btn-primary">Start new game</button>
-        </form>
-
-        <form method="post" action="/statistics">
-          <button type="submit" class="btn btn-primary">Show players results</button>
-        </form>
+        <%= render '_buttons.html.erb' %>
       </section>
 
       <section id="guess-section">
-        <form id="guess-form" class="form-inline" method="post" action="/submit_guess">
-          <div class="form-group">
-            <label id="guess-label" for="guess">Enter your guess no. <%= guess_count %>:</label>
-            <input id="guess" name="guess" type="text" placeholder="1234" class="form-control">
-            <button id="submit-btn" type="submit" class="btn btn-primary">Enter guess</button>
-          </div>
-        </form>
-
-        <form method="post" action="/hint">
-          <button id="hint-btn" type="submit" class="btn btn-success">Take a hint</button>
-        </form>
+        <%= render '_guess_section.html.erb' %>
       </section>
 
       <section id="game-result">
-        <% if won? %>
-          <div class="alert alert-success">
-            <strong>CONGRATULATIONS! You've won the game!</strong>
-            You used <%= @game.guess_count %> attempts
-            and your score is <strong><%= @game.score %> points.</strong>
-            The secret code was <strong><%= @game.secret_code %></strong>
-          </div>
-        <% end %>
-
-        <% if lost? %>
-          <div class="alert alert-danger">
-            <strong>You've lost the game!</strong>
-            You used <%= @game.guess_count %> attempts
-            and your score is <strong><%= @game.score %> points.</strong>
-            The secret code was <strong><%= @game.secret_code %></strong>
-          </div>
-        <% end %>
+        <%= render '_game_result.html.erb' %>
       </section>
 
       <section id="save-result">
-        <% if ((won? || lost?) && propose_to_save_result?) %>
-          <form id="save-result-ok-form" class="form-inline" method="post" action="/save_result">
-            <div class="form-group">
-              <label id="save-result-label" for="name">Please enter your name: </label>
-              <input id="name-input" name="name" type="text" placeholder="Name" class="form-control">
-              <button id="save-result-ok-btn" type="submit" class="btn btn-primary">OK</button>
-            </div>
-          </form>
-          <form id="save-result-cancel-form" method="post" action="/cancel_save_result">
-            <button id="save-result-cancel-btn" type="submit" class="btn btn-primary">Cancel</button>
-          </form>
-        <% end %>
+        <%= render '_save_result.html.erb' %>
       </section>
 
       <section id="info">
         <div id="attempts-hints-info">
-          <% if show_hint? %>
-            <div class="alert alert-success">
-              <strong>HINT: </strong>number <strong><%= secret_number %></strong>
-              is in position <strong><%= secret_position %></strong>
-            </div>
-          <% end %>
-
-          <div class="alert alert-info">
-            You have <strong><%= guess_left %></strong> attempts left<br>
-            You have <strong><%= hints_left %></strong> hint left
-          </div>
+          <%= render '_attempts_hints_info.html.erb' %>
         </div>
 
         <div id="guess-log">
-          <% guess_log.each do |guess| %>
-            <%= guess %><br>
-          <% end %>
+          <%= render '_guess_log.html.erb' %>
         </div>
       </section>
     </div>

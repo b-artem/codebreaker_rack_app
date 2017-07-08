@@ -2,10 +2,13 @@ require 'codebreaker_artem/game'
 require 'codebreaker_artem/validator'
 require 'yaml'
 require './lib/yaml_utils'
+require './lib/helpers'
 
 MAX_ATTEMPTS = CodebreakerArtem::Game::MAX_GUESS_NUMBER
 
 class RackApp
+  include Helpers
+
   def self.call(env)
     new(env).response.finish
   end
@@ -83,23 +86,6 @@ class RackApp
     end
   end
 
-  def guess_count
-    return '1' unless @game
-    guess_count = @game.guess_count
-    return guess_count if guess_count == MAX_ATTEMPTS
-    guess_count + 1
-  end
-
-  def guess_left
-    return MAX_ATTEMPTS unless @game
-    MAX_ATTEMPTS - @game.guess_count
-  end
-
-  def guess_log
-    guess_log = @guess_log || 'No guesses yet'
-    guess_log.split("\n")
-  end
-
   def hint
     return Rack::Response.new { |resp| resp.redirect('/') } unless (hint = @game.hint)
     Rack::Response.new do |response|
@@ -108,18 +94,6 @@ class RackApp
       YamlUtils.save_sessions @sessions
       response.redirect('/')
     end
-  end
-
-  def hints_left
-    return 'no' unless @request.cookies['secret_number']
-    return 'no' unless @request.cookies['secret_number'] == ''
-    '1'
-  end
-
-  def show_hint?
-    return unless (hint = @request.cookies['secret_number'])
-    return if hint == ''
-    true
   end
 
   def save_result
@@ -138,36 +112,7 @@ class RackApp
     end
   end
 
-  def propose_to_save_result?
-    true if @request.cookies['save_result'] == ''
-  end
-
   def statistics
     Rack::Response.new(render('statistics.html.erb'))
-  end
-
-  def stats
-    YamlUtils.read_stats
-  end
-
-  def secret_number
-    @request.cookies['secret_number']
-  end
-
-  def secret_position
-    @request.cookies['secret_position']
-  end
-
-  def won?
-    return unless @guess_log
-    return unless @guess_log.include? '++++'
-    true
-  end
-
-  def lost?
-    return if won?
-    return unless @game
-    return if @game.guess_count < MAX_ATTEMPTS
-    true
   end
 end
