@@ -1,0 +1,12 @@
+<% if ((won? || lost?) && propose_to_save_result?) %>
+  <form id="save-result-ok-form" class="form-inline" method="post" action="/save_result">
+    <div class="form-group">
+      <label id="save-result-label" for="name">Please enter your name: </label>
+      <input id="name-input" name="name" type="text" placeholder="Name" class="form-control">
+      <button id="save-result-ok-btn" type="submit" class="btn btn-primary">OK</button>
+    </div>
+  </form>
+  <form id="save-result-cancel-form" method="post" action="/cancel_save_result">
+    <button id="save-result-cancel-btn" type="submit" class="btn btn-primary">Cancel</button>
+  </form>
+<% end %>

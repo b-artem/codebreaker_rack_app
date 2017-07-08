@@ -1,0 +1,11 @@
+<% if show_hint? %>
+  <div class="alert alert-success">
+    <strong>HINT: </strong>number <strong><%= secret_number %></strong>
+    is in position <strong><%= secret_position %></strong>
+  </div>
+<% end %>
+
+<div class="alert alert-info">
+  You have <strong><%= guess_left %></strong> attempts left<br>
+  You have <strong><%= hints_left %></strong> hint left
+</div>

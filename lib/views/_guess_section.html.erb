@@ -1,0 +1,11 @@
+<form id="guess-form" class="form-inline" method="post" action="/submit_guess">
+  <div class="form-group">
+    <label id="guess-label" for="guess">Enter your guess no. <%= guess_count %>:</label>
+    <input id="guess" name="guess" type="text" placeholder="1234" class="form-control">
+    <button id="submit-btn" type="submit" class="btn btn-primary">Enter guess</button>
+  </div>
+</form>
+
+<form method="post" action="/hint">
+  <button id="hint-btn" type="submit" class="btn btn-success">Take a hint</button>
+</form>
